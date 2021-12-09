@@ -10,7 +10,9 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import xgboost as xgb
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense
@@ -109,8 +111,10 @@ figure = plt.figure()
 plt.plot(np.arange(0,len(loss_training)) ,loss_training, label = 'Training')
 plt.plot(np.arange(0,len(loss_training)) ,loss_validation, label = 'Validation')
 plt.legend()
+plt.grid()
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
+plt.savefig(plot_dir + 'Loos.png')
 figure.show()
 
 #Accuracy function
@@ -118,12 +122,11 @@ figure = plt.figure()
 plt.plot(np.arange(0,len(loss_training)) ,accuracy_training, label = 'Training')
 plt.plot(np.arange(0,len(loss_training)) ,accuracy_validation, label = 'Validation')
 plt.legend()
+plt.grid()
 plt.xlabel('Epoch')
 plt.ylabel('Accuracy')
+plt.savefig(plot_dir + 'Accuracy.png')
 figure.show()
 
 
-##############XGboot model################################################
 
-    
-    
