@@ -43,7 +43,7 @@ y_train_cat = tf.keras.utils.to_categorical(y_train[:,0], N_cat)
 y_test_cat = tf.keras.utils.to_categorical(y_test[:,0], N_cat)
 
 BS = 512
-EPOCH = 100
+EPOCH = 10
 device = '/GPU:0'
 def objective(trial):
     clear_session()
