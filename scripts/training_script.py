@@ -49,16 +49,16 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, rando
 y_train_cat = tf.keras.utils.to_categorical(y_train[:,0], N_cat)
 y_test_cat = tf.keras.utils.to_categorical(y_test[:,0], N_cat)
 
-# device = '/CPU:0'
-device = '/GPU:0'
+device = '/CPU:0'
+# device = '/GPU:0'
 
 #####NN model##################
 input_layer = Input(shape = (M,1)) 
-x = Conv1D(5,5, activation = 'relu')(input_layer)
-x = Conv1D(5,5, activation = 'relu')(x)
+x = Conv1D(15,10, activation = 'relu')(input_layer)
+x = Conv1D(10,10, activation = 'relu')(x)
 x = Flatten()(x)
-x = Dense(50, activation='relu')(x)
 x = Dense(40, activation='relu')(x)
+x = Dense(50, activation='relu')(x)
 output_layer = Dense(N_cat, activation='softmax')(x)
 model = Model(inputs = input_layer, outputs = output_layer, name = 'weather_radar_composition_classification_NN' )
 
@@ -66,7 +66,7 @@ model.summary()
 
 EPOCHS = 100
 BS = 512
-lr = 1e-5
+lr = 0.00239
 
 plot_dir = 'plot_training/'
 if not os.path.exists(plot_dir):
@@ -82,13 +82,13 @@ with tf.device(device):
     model.compile(optimizer = opt, loss = 'categorical_crossentropy', metrics = ['accuracy', tf.keras.metrics.Precision(), tf.keras.metrics.Recall()])
     custom_early_stopping = EarlyStopping(
             monitor='val_loss', 
-            patience=10, 
+            patience=5, 
             min_delta=0.005, 
             mode='auto',
             restore_best_weights = True
             )
     
-    H = model.fit(X_train, y_train_cat, epochs = 200, batch_size = BS,
+    H = model.fit(X_train, y_train_cat, epochs = EPOCHS, batch_size = BS,
           validation_data = (X_test, y_test_cat),
           verbose = 1,
           callbacks=[custom_early_stopping])

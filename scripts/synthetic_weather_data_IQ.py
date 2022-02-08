@@ -530,8 +530,6 @@ def synthetic_data_train(M, Fc, Tu = 0.25e-3, theta_3dB_acimut = 1, radar_mode =
                                'num_realizations':1
                                }   
     
-    #windows
-    window = np.kaiser(num_samples_uniform, 8)
     
     # looping through the four parameter grids
     for i in progressbar(range(N_vel), 'Computing:') :
