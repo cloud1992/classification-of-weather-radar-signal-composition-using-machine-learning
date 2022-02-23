@@ -25,6 +25,7 @@ Input_params_stagg = {'M':64,
 data_PSD = synthetic_weather_data_IQ.synthetic_data_train(**Input_params_stagg) 
 
 
+
 dirName = 'training_data/'
 if not os.path.exists(dirName):
      os.mkdir(dirName)
