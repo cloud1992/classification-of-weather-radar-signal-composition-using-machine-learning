@@ -607,8 +607,8 @@ def synthetic_data_train(M, Fc, Tu = 0.25e-3, theta_3dB_acimut = 1, radar_mode =
     
     
     
-    data_PSD = np.concatenate((data_c_n, data_c_p_n , data_p_n ) , axis = 0)
-    return data_PSD, radar_mode                                 
+    data_PSD = np.concatenate([data_c_n, data_c_p_n , data_p_n ] , axis = 0)
+    return data_PSD                                
     print('Data generation has finished')                    
                         
    
