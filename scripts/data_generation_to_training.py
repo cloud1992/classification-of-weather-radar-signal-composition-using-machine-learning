@@ -43,7 +43,7 @@ np.save(dirName + f"{number_of_batch}_batch",data_PSD[(i+1)*Batch_size:, :])
      
 np.save(dirName + 'training_data', data_PSD) 
 
-M = data_PSD.shape[1] - 3
+M = data_PSD.shape[1] - 1
 np.save(dirName + 'some_params_to_train',(M, number_of_batch, Batch_size, radar_mode)) 
 
 
