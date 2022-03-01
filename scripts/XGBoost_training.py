@@ -18,6 +18,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 import tensorflow as tf
 import optuna 
+from Data_generator_class import DataGenerator
 
 N_cat = 4
 
@@ -33,11 +34,21 @@ try:
 except Exception as e:
     print(e)     
 
+
+
+
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 29)
 
 
+dirName_models = 'models/xgboost/'
+if not os.path.exists(dirName_models):
+     os.mkdir(dirName_models)
+     print("Directory " , dirName_models ,  " Created ")
+else:    
+     print("Directory " , dirName_models ,  " already exists")
 
-def objective(trial, X_train, X_test, y_train, y_test, **parms):
+params = { 'random_state':29,'n_estimators':1000}
+def objective(trial):
     
     learning_rate = trial.suggest_float("learning_rate", 0.05e-2, 0.25, log=True)
     reg_lambda = trial.suggest_loguniform("reg_lambda", 1e-8, 100.0)
@@ -57,32 +68,24 @@ def objective(trial, X_train, X_test, y_train, y_test, **parms):
             colsample_bytree=colsample_bytree,
             max_depth=max_depth,
             use_label_encoder=False,
-            **parms
+            **params
         )
     model.fit(X_train, y_train, early_stopping_rounds=10, eval_set=[(X_test, y_test)], verbose=False)
+    
+    model.save_model(dirName_models + f"model_{trial.number}_xgb.json")
     preds_test = model.predict(X_test)
     accuracy_xgb = accuracy_score(y_test, preds_test)
+    
     return accuracy_xgb
 
 #start parameter study
-params = { 'random_state':29,'n_estimators':1000}
-study1 = optuna.create_study(direction="maximize")
-study1.optimize(lambda trial:objective(trial,X_train, X_test, y_train, y_test, **params), n_trials=10)   
 
-best_parms1 = study1.best_params
+study_xgb = optuna.create_study(direction="maximize")
+study_xgb.optimize(objective, n_trials=100)   
+df = study_xgb.trials_dataframe()
+df.to_csv(dirName_models + "optuna_study_xgb.csv")
+
+best_parms_xgb = study_xgb.best_params
 print('The best parameters are: ')
-print(best_parms1) 
+print(best_parms_xgb) 
 
-##############XGboot model################################################
-# data_dmatrix = xgb.DMatrix(data = X_train, label = y_train)
-xg_reg = xgb.XGBClassifier(**best_parms1,**params, tree_method = 'gpu_hist', predictor='gpu_predictor', use_label_encoder=False)  
-  
-# xg_reg = xgb.XGBClassifier(tree_method = 'gpu_hist', predictor='gpu_predictor', objective = 'multi:softmax', num_class = 4, colsample_bytree = 0.3, learning_rate = 0.1,
-#                 max_depth = 5, alpha = 10, n_estimators = 100, use_label_encoder=False  )   
-
-xg_reg.fit(X_train, y_train)
-
-y_pred_xgb = xg_reg.predict(X_test)
-predictions = [round(value) for value in y_pred_xgb]
-accuracy_xgb = accuracy_score(y_test, predictions)
-print(f'The accuracy using XGBoost is {accuracy_xgb}')

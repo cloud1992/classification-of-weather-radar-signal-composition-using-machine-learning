@@ -44,7 +44,7 @@ EPOCHS = 120
 device = '/GPU:0'
 
 
-dirName_models = 'models/'
+dirName_models = 'models/NN/'
 if not os.path.exists(dirName_models):
      os.mkdir(dirName_models)
      print("Directory " , dirName_models ,  " Created ")
@@ -119,7 +119,7 @@ def objective(trial):
 
 if __name__ == "__main__":
     study = optuna.create_study(direction="maximize")
-    study.optimize(objective, n_trials=30 )
+    study.optimize(objective, n_trials=100 )
     df = study.trials_dataframe()
     df.to_csv(dirName_models + "optuna_study.csv")
     best_params = study.best_params
